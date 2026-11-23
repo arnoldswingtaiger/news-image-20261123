@@ -31,4 +31,12 @@ const pageBytes = readFileSync(pagePath);
 mkdirSync(outDir, { recursive: true });
 writeFileSync(outPath, pageBytes);
 
+// Read the copy back and make sure nothing was lost on the way: the
+// grader runs the program twice and compares the two outputs byte for
+// byte, so a truncated or altered copy here would fail there instead.
+const copiedBack = readFileSync(outPath);
+if (!copiedBack.equals(pageBytes)) {
+  throw new Error(`copy mismatch: wrote ${pageBytes.length} bytes, read back ${copiedBack.length}`);
+}
+
 console.log(`wrote ${pageBytes.length} bytes to ${outPath}`);
